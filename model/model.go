@@ -9,7 +9,7 @@ type EHttp struct {
 	Nowtime  string `gorm:"column:ntime;type:datetime;default:current_timestamp" json:"ntime"` //
 	Duration int    `gorm:"column:duration;default:0" json:"duration"`                         //请求时长
 	Code     int    `gorm:"column:code;default:0" json:"code"`                                 //状态吗
-	Succ     int    `gorm:"column:succ;default:0" json:"succ"`                                 //状态吗 0失败，1成功
+	// Succ     int    `gorm:"column:succ;default:0" json:"succ"`                                 //状态吗 0失败，1成功
 }
 
 type ETarget struct {

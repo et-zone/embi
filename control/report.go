@@ -34,7 +34,7 @@ func getTableNow() *charts.Bar {
 //获取当天图表详细信息
 func getTableNowDetail() *charts.Bar {
 	t := time.Now().Format("2006-01-02 15:04:05")
-	sql := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, method ,path,succ ,count(id) AS dcount FROM e_http WHERE ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY time,method,path,succ  ORDER BY time"
+	sql := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, method ,path,CASE CODE WHEN 200 THEN 1 ELSE 0 END succ ,count(id) AS dcount FROM e_http WHERE ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY time,method,path,succ ORDER BY time"
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
 		Title:    "今日详情",
@@ -94,7 +94,7 @@ func getLineLastTime() *charts.Line {
 //获取今请求成功失败比例
 func getPidNow() *charts.Pie {
 	t := time.Now().Format("2006-01-02 15:04:05")
-	sql := "SELECT succ ,count(id) succnum FROM e_http where ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY succ "
+	sql := "SELECT CASE CODE WHEN 200 THEN 1 ELSE 0 END succ ,count(id) succnum FROM e_http where ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY succ "
 
 	val, fields := dao.Query(sql)
 	if len(fields) != 2 {
@@ -164,7 +164,7 @@ func getLineMonthCmp() *charts.Line {
 	beftime := time.Now().Add(time.Second * 60 * 60 * 24 * -30)
 	bef := beftime.Format("2006-01-02 15:04:05")
 
-	sqlsucc := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS succount FROM e_http WHERE succ=1 AND ntime BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sqlsucc := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS succount FROM e_http WHERE code=200 AND ntime BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 	val, fields := dao.Query(sqlsucc)
 	table := &chart.Table{
 		Title:    "近30天曲率对比",
@@ -175,7 +175,7 @@ func getLineMonthCmp() *charts.Line {
 	baseBIAddmsg(table, val, fields)
 	AddValueIfNotExitWithTable(table, beftime, nowtime, "d")
 
-	sqlfail := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS failcount FROM e_http WHERE succ=0 AND ntime BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sqlfail := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS failcount FROM e_http WHERE code<>200 AND ntime BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 
 	val2, fields2 := dao.Query(sqlfail)
 	table2 := &chart.Table{

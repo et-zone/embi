@@ -36,7 +36,11 @@ func (ctx *eContext) UpdateContext(appName string, method string, path string, c
 	} else {
 		list := strings.SplitN(plist[0], "/", 2)
 		ctx.ip = list[0]
-		ctx.path = "/" + list[1]
+		if len(list) == 1 {
+			ctx.path = "/"
+		} else {
+			ctx.path = "/" + list[1]
+		}
 	}
 	ctx.appName = appName
 	ctx.method = method
