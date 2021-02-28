@@ -1,14 +1,14 @@
 package model
 
 type EHttp struct {
-	ID       int64  `gorm:"primary_key;auto_increment" json:"id,omitempty"`                    //
-	AppName  string `gorm:"column:appname;size:20;default:''" json:"appName"`                  //
-	Method   string `gorm:"column:method;size:20;default:''" json:"method"`                    //
-	Ip       string `gorm:"column:ip;size:20;default:''" json:"ip"`                            //
-	Path     string `gorm:"column:path;size:50;default:''" json:"path"`                        //不需要ip地址
-	Nowtime  string `gorm:"column:ntime;type:datetime;default:current_timestamp" json:"ntime"` //
-	Duration int    `gorm:"column:duration;default:0" json:"duration"`                         //请求时长
-	Code     int    `gorm:"column:code;default:0" json:"code"`                                 //状态吗
+	ID       int64  `gorm:"primary_key;auto_increment" json:"id,omitempty"`                      //
+	AppName  string `gorm:"column:s_name;size:20;default:''" json:"s_name"`                      //
+	Method   string `gorm:"column:method;size:20;default:''" json:"method"`                      //
+	Ip       string `gorm:"column:ip;size:20;default:''" json:"ip"`                              //
+	Path     string `gorm:"column:path;size:50;default:''" json:"path"`                          //不需要ip地址
+	Nowtime  string `gorm:"column:s_time;type:datetime;default:current_timestamp" json:"s_time"` //
+	Duration int    `gorm:"column:duration;default:0" json:"duration"`                           //请求时长
+	Status   int    `gorm:"column:status;default:0" json:"status"`                               //状态吗
 	// Succ     int    `gorm:"column:succ;default:0" json:"succ"`                                 //状态吗 0失败，1成功
 }
 

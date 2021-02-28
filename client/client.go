@@ -64,7 +64,7 @@ func (this *Client) Dao(ctx *eContext, addr string) error {
 		Path:     ctx.path,
 		Nowtime:  ctx.nowtime.Format("2006-01-02 15:04:05"),
 		Duration: int(ctx.duration),
-		Code:     ctx.code,
+		Status:   ctx.status,
 	}
 
 	b, err := json.Marshal(ehttp)

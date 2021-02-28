@@ -14,7 +14,7 @@ type eContext struct {
 	path     string        //不需要ip地址
 	nowtime  time.Time     //
 	duration time.Duration //请求时长
-	code     int           //状态吗
+	status   int           //状态吗
 	flag     bool          //
 }
 
@@ -45,7 +45,7 @@ func (ctx *eContext) UpdateContext(appName string, method string, path string, c
 	ctx.appName = appName
 	ctx.method = method
 	ctx.duration = time.Since(ctx.nowtime)
-	ctx.code = code
+	ctx.status = code
 
 }
 
@@ -61,5 +61,5 @@ func (ctx *eContext) GeteContextInfo() (nowtime time.Time, appName string, ip st
 		t := time.Now()
 		return t, "", "", "", "", 0, 0
 	}
-	return ctx.nowtime, ctx.appName, ctx.ip, ctx.method, ctx.path, ctx.duration, ctx.code
+	return ctx.nowtime, ctx.appName, ctx.ip, ctx.method, ctx.path, ctx.duration, ctx.status
 }

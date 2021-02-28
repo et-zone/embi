@@ -13,7 +13,7 @@ import (
 //获取当天图表信息
 func getTableNow() *charts.Bar {
 	t := time.Now().Format("2006-01-02 15:04:05")
-	sql := "SELECT DATE( ntime ) createtime, ROUND(AVG(duration)) avgduration, count(id) dcount, max( duration) maxduration, min( duration) minduration FROM e_http WHERE ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY createtime"
+	sql := "SELECT DATE( s_time ) createtime, ROUND(AVG(duration)) avgduration, count(id) dcount, max( duration) maxduration, min( duration) minduration FROM e_http WHERE s_time BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY createtime"
 
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
@@ -34,7 +34,7 @@ func getTableNow() *charts.Bar {
 //获取当天图表详细信息
 func getTableNowDetail() *charts.Bar {
 	t := time.Now().Format("2006-01-02 15:04:05")
-	sql := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, method ,path,CASE CODE WHEN 200 THEN 1 ELSE 0 END succ ,count(id) AS dcount FROM e_http WHERE ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY time,method,path,succ ORDER BY time"
+	sql := "SELECT DATE_FORMAT(s_time, '%Y-%m-%d') AS time, method ,path,CASE status WHEN 200 THEN 1 ELSE 0 END succ ,count(id) AS dcount FROM e_http WHERE s_time BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY time,method,path,succ ORDER BY time"
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
 		Title:    "今日详情",
@@ -55,7 +55,7 @@ func getTableNowDetail() *charts.Bar {
 //获取当QPS
 func getLineNow() *charts.Line {
 	t := time.Now().Format("2006-01-02 15:04:05")
-	sql := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d %H:%i:00') AS time, count(id) AS qpsm FROM e_http WHERE ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sql := "SELECT DATE_FORMAT(s_time, '%Y-%m-%d %H:%i:00') AS time, count(id) AS qpsm FROM e_http WHERE s_time BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
@@ -75,7 +75,7 @@ func getLineNow() *charts.Line {
 func getLineLastTime() *charts.Line {
 	now := time.Now().Format("2006-01-02 15:04:05")
 	bef := time.Now().Add(time.Second * 60 * 60 * -12).Format("2006-01-02 15:04:05")
-	sql := "SELECT ntime AS time, count(id) AS qps FROM e_http WHERE ntime BETWEEN '" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sql := "SELECT s_time AS time, count(id) AS qps FROM e_http WHERE s_time BETWEEN '" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
@@ -94,7 +94,7 @@ func getLineLastTime() *charts.Line {
 //获取今请求成功失败比例
 func getPidNow() *charts.Pie {
 	t := time.Now().Format("2006-01-02 15:04:05")
-	sql := "SELECT CASE CODE WHEN 200 THEN 1 ELSE 0 END succ ,count(id) succnum FROM e_http where ntime BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY succ "
+	sql := "SELECT CASE status WHEN 200 THEN 1 ELSE 0 END succ ,count(id) succnum FROM e_http where s_time BETWEEN '" + t[:10] + " 00:00:00" + "' AND '" + t[:10] + " 23:59:59" + "' GROUP BY succ "
 
 	val, fields := dao.Query(sql)
 	if len(fields) != 2 {
@@ -119,7 +119,7 @@ func getPidNow() *charts.Pie {
 func getTableMonth() *charts.Bar {
 	now := time.Now().Format("2006-01-02 15:04:05")
 	bef := time.Now().Add(time.Second * 60 * 60 * 24 * -30).Format("2006-01-02 15:04:05")
-	sql := "SELECT DATE( ntime ) createtime, ROUND(AVG(duration)) avgduration, count(id) dcount, max( duration) maxduration, min( duration) minduration FROM e_http WHERE ntime BETWEEN '" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY createtime"
+	sql := "SELECT DATE( s_time ) createtime, ROUND(AVG(duration)) avgduration, count(id) dcount, max( duration) maxduration, min( duration) minduration FROM e_http WHERE s_time BETWEEN '" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY createtime"
 
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
@@ -141,7 +141,7 @@ func getTableMonth() *charts.Bar {
 func getLineMonth() *charts.Line {
 	now := time.Now().Format("2006-01-02 15:04:05")
 	bef := time.Now().Add(time.Second * 60 * 60 * 24 * -30).Format("2006-01-02 15:04:05")
-	sql := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS dcount FROM e_http WHERE ntime BETWEEN '" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sql := "SELECT DATE_FORMAT(s_time, '%Y-%m-%d') AS time, count(id) AS dcount FROM e_http WHERE s_time BETWEEN '" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 
 	val, fields := dao.Query(sql)
 	table := &chart.Table{
@@ -164,7 +164,7 @@ func getLineMonthCmp() *charts.Line {
 	beftime := time.Now().Add(time.Second * 60 * 60 * 24 * -30)
 	bef := beftime.Format("2006-01-02 15:04:05")
 
-	sqlsucc := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS succount FROM e_http WHERE code=200 AND ntime BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sqlsucc := "SELECT DATE_FORMAT(s_time, '%Y-%m-%d') AS time, count(id) AS succount FROM e_http WHERE status=200 AND s_time BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 	val, fields := dao.Query(sqlsucc)
 	table := &chart.Table{
 		Title:    "近30天曲率对比",
@@ -175,7 +175,7 @@ func getLineMonthCmp() *charts.Line {
 	baseBIAddmsg(table, val, fields)
 	AddValueIfNotExitWithTable(table, beftime, nowtime, "d")
 
-	sqlfail := "SELECT DATE_FORMAT(ntime, '%Y-%m-%d') AS time, count(id) AS failcount FROM e_http WHERE code<>200 AND ntime BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
+	sqlfail := "SELECT DATE_FORMAT(s_time, '%Y-%m-%d') AS time, count(id) AS failcount FROM e_http WHERE status<>200 AND s_time BETWEEN'" + bef[:10] + " 00:00:00" + "' AND '" + now[:10] + " 23:59:59" + "' GROUP BY time ORDER BY time"
 
 	val2, fields2 := dao.Query(sqlfail)
 	table2 := &chart.Table{
